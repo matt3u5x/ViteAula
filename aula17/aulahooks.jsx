@@ -1,4 +1,5 @@
-import { useState } from 'react'
+iimport { useState } from 'react'
+import {v4 as uuid } from 'uuid'
 import './App.css'
 
 function App() {
@@ -16,10 +17,29 @@ function App() {
     //spread
     // ... vai percorrer a listaTarefas e recriar a lista com as tarefas existentes 
     const adicionarTarefa = () => {
-        setListaTarefas([...listaTarefas, {id: new Date(), nome: nomeTarefa, status: false}])
+
+      if(nomeTarefa.trim() == ""){
+        alert("Não é permitido adicionar tarefas vazias")
+        return
+      }
+
+        setListaTarefas([...listaTarefas, {id: uuid(), nome: nomeTarefa, status: false}])
 
         setNomeTarefa ('')
+
+        
     }
+
+    const excluirTarefa = (id) =>{
+      setListaTarefas(listaTarefas.filter( tarefa => tarefa.id !== id ))
+  }
+
+    const marcarTarefa = (id) =>{
+      setListaTarefas(listaTarefas.map( tarefa =>
+        tarefa.id === id ? {...tarefa, status: !tarefa.status} : tarefa
+      ))
+    }
+
     // criando estrelas para o background
     const body = document.querySelector('body');
 
@@ -31,7 +51,6 @@ function App() {
       star.style.left = `${Math.random() * 100}vw`;
       body.appendChild(star);
     }
-    
 
   return (
     <div className="todo-container">
@@ -51,11 +70,14 @@ function App() {
          { listaTarefas.map( (tarefa) => (
 
 
-        <li key={tarefa.id}>
+        <li key={tarefa.id} className={tarefa.status ? "completed" : ''}>
           {tarefa.nome}
           <div>
-            <button className="complete-btn" >✔</button>
-            <button className="delete-btn" >❌</button>
+            <button className="complete-btn" 
+            onClick={() => marcarTarefa(tarefa.id)}>✔</button>
+            
+            <button className="delete-btn" 
+            onClick={() => excluirTarefa(tarefa.id)}>❌</button>
           </div>
         </li>
         ))}
@@ -65,11 +87,7 @@ function App() {
 }
 
 export default App
-
-
 //app.css
-/* App.css */
-
 /* App.css */
 
 * {
@@ -254,7 +272,7 @@ li {
 
 li.completed {
   text-decoration: line-through;
-  background-color: #444;
+  background-color: rgb(156, 212, 81);
   color: #888;
 }
 
